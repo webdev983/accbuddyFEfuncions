@@ -11,6 +11,7 @@
         <!-- link style start here -->
         <link rel="stylesheet" href="./assests/css/home.css" media="all">
         <link rel="stylesheet" href="./assests/css/style.css" media="all">
+        <script src="./js/googlecaptcha.js"></script>
     </head>
 
     <body>
@@ -3577,41 +3578,39 @@
                                         </h2>
                                     </div>
                                     <div class="ab-footer-content-right">
-                                        <form action="/post" class="ab-footer-input-form">
+                                        <form class="api-form" id="captchaform">
                                             <div class="ab-form-input-box">
-                                                <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                                <div class="ab-input-group">
-                                                    <input name="name" type="text" class="ab-input" required
-                                                        placeholder="Name">
-                                                    <span class="warn-text">Please enter your name</span>
-                                                </div>
-                                                <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                                <div class="ab-input-group">
-                                                    <input name="email" type="email" class="ab-input"
-                                                        placeholder="Email">
-                                                    <span class="warn-text">Please enter a valid email address</span>
-                                                </div>
-                                                <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                                <div class="ab-textarea-group">
-                                                    <textarea name="text" placeholder="Message"></textarea>
-                                                    <span class="warn-text">Please enter a message between 10 and 1000
-                                                        characters</span>
-                                                </div>
-                                                <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                                <div class="ab-check-requred">
-                                                    <label for="checkedRequered">
-                                                        <input type="checkbox" id="checkedRequered" class="check-mark">
-                                                        <span class="ab-check-mark-box"></span>
-                                                        <span class="text">I have read and agree to the Privacy Policy
-                                                            and
-                                                            Terms of Service</span>
-                                                    </label>
-                                                </div>
-                                                <div class="ab-button-group">
-                                                    <button class="ab-button-style ab-footer-button">Send</button>
-                                                </div>
+                                              <!-- passing extra class('warning') for invalid/required inputs warning  -->
+                                              <div class="ab-input-group">
+                                                <input id="name" type="name" class="ab-input" required placeholder="Name">
+                                                <span class="warn-text">Please enter your name</span>
+                                              </div>
+                                              <!-- passing extra class('warning') for invalid/required inputs warning  -->
+                                              <div class="ab-input-group">
+                                                <div class="g-recaptcha" data-sitekey="6LcShYkmAAAAAA_FN5w0Oewh_-7XzIocjZlX6apw" data-callback="loadRecaptchaScript" data-size="invisible"></div>
+                                                <input id="email" type="email" class="ab-input" required placeholder="Email" onchange="loadRecaptchaScript()">
+                                                <span class="warn-text">Please enter a valid email address</span>
+                                              </div>
+                                              <!-- passing extra class('warning') for invalid/required inputs warning  -->
+                                              <div class="ab-textarea-group">
+                                                <textarea id="footerMessage" name="message" required placeholder="Message"></textarea>
+                                                <span class="warn-text">Please enter a message between 10 and 1000
+                                                  characters</span>
+                                              </div>
+                                              <!-- passing extra class('warning') for invalid/required inputs warning  -->
+                                              <div class="ab-check-requred">
+                                                <label for="checkedRequired">
+                                                  <input type="checkbox" id="checkedRequired" class="check-mark" onclick="enableButton()">
+                                                  <p class="text">I have read and agree to the Privacy Policy and
+                                                    Terms of Service</p>
+                                                </label>
+                                              </div>
+                                              <div class="ab-button-group">
+
+                                              <button class="ab-button-style ab-footer-button" id="sendButton" type="button" onclick="submitForm()" disabled>Send</button>       
+                                            </div>             
                                             </div>
-                                        </form>
+                                          </form>
                                     </div>
                                 </div>
                                 <div class="ab-footer-link-wrap">
