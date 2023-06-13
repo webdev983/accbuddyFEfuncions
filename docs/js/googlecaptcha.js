@@ -46,8 +46,9 @@ function callExternalAPI(token) {
   const email = emailInput.value;
   const message = messageInput.value;
 
-  const url = 'https://api.accbuddy.com/tickets-api';
+  const url = 'https://api.accbuddy.com/public';
   const data = {
+    data: "submit_message"
     name: name,
     email: email,
     message: message,
