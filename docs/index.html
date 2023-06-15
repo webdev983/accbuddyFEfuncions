@@ -11,109 +11,8 @@
     <!-- link style start here -->
     <link rel="stylesheet" href="./assests/css/home.css" media="all">
     <link rel="stylesheet" href="./assests/css/style.css" media="all">
-    <script>
-        function cleanInput(event) {
-            const { target } = event
-            if (target) {
-                event.target.nextElementSibling.style.display = "none"
-            }
-        }
-        function cleanCheckbox() {
-            const spanText = document.getElementById("checkbox-text")
-            const abCheckRequred = document.getElementsByClassName("ab-check-requred")[1]
-            if (spanText && abCheckRequred) {
-                abCheckRequred.classList.remove("warning")
-                spanText.innerText = "I have read and agree to the Privacy Policy and Terms of Service"
-            }
-        }
-
-        function isValidEmail(event) {
-            const email = event.target.value
-            // const abInputRequred = document.getElementsByClassName("ab-input-group")[1]
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            const isValid = emailRegex.test(email);
-            
-            if (!isValid) {
-                event.target.nextElementSibling.style.display = "block"
-            }
-        }
-
-        function isValidName(event) {
-            const name = event.target.value
-            const isValid = name.trim().length > 0
-            if (!isValid) {
-                event.target.nextElementSibling.style.display = "block"
-            }
-        }
-
-        function isValidText(event) {
-            const text = event.target.value
-            const textLength = text.trim().length
-            const isValid = textLength >= 10 && textLength <= 1000
-            if (!isValid) {
-                event.target.nextElementSibling.style.display = "block"
-            }
-        }
-
-        function isValidCheckbox(event) {
-            const checked = event.target.checked
-            const abCheckRequred = document.getElementsByClassName("ab-check-requred")[1]
-            if (!checked && abCheckRequred) {
-                abCheckRequred.classList.add("warning")
-
-                const spanText = document.getElementById("checkbox-text")
-                if (!checked && spanText) {
-                    spanText.innerText = "In order to submit your message, you need to accept our privacy policy and terms of conditions"
-                }
-            }
-        }
 
 
-        const getElemValuesByIds = (ids) => {
-            return Array.from(ids).map(id => {
-                const elem = document.getElementById(id)
-                console.log(elem)
-                return elem.value
-            })
-        }
-
-        function onload() {
-            const element = document.getElementById('submit')
-            element.onclick = loadRecaptcha
-        }
-
-        function loadRecaptcha(event) {
-            event.preventDefault()
-            grecaptcha.execute()
-        }
-
-        function onSubmit(token) {
-            const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
-            const asyncSubmit = async () => {
-                const res = await fetch("https://api.accbuddy.com/public", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        test_recaptcha: {
-                            token,
-                        },
-                        sendMessageDataset: {
-                            sender: name,
-                            email: email,
-                            text: text,
-                        }
-                    })
-                })
-
-                const response = await res.json()
-            }
-
-            asyncSubmit()
-        }
-    </script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -3682,20 +3581,23 @@
                                         <div class="ab-form-input-box">
                                             <!-- passing extra class('warning') for invalid/required inputs warning  -->
                                             <div class="ab-input-group">
+                                                <!-- warn-text class should always have ab-input-group class parent for invalid warning  -->
                                                 <input onfocus="cleanInput(event)" onblur="isValidName(event)" id="name"
                                                     name="name" type="text" class="ab-input" required
                                                     placeholder="Name">
                                                 <span class="warn-text">Please enter your name</span>
                                             </div>
                                             <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                            <div class="ab-input-group">
+                                            <div class="ab-input-group ">
+                                                <!-- warn-text class should always have ab-input-group class parent for invalid warning  -->
                                                 <input onfocus="cleanInput(event)" onblur="isValidEmail(event)"
                                                     id="email" name="email" type="email" class="ab-input"
                                                     placeholder="Email">
                                                 <span class="warn-text">Please enter a valid email address</span>
                                             </div>
                                             <!-- passing extra class('warning') for invalid/required inputs warning  -->
-                                            <div class="ab-textarea-group">
+                                            <div class="ab-textarea-group ">
+                                                <!-- warn-text class should always have ab-input-group class parent for invalid warning  -->
                                                 <textarea onfocus="cleanInput(event)" onblur="isValidText(event)"
                                                     id="text" name="text" placeholder="Message"></textarea>
                                                 <span class="warn-text">Please enter a message between 10 and 1000
@@ -3703,8 +3605,9 @@
                                             </div>
                                             <!-- passing extra class('warning') for invalid/required inputs warning  -->
                                             <div class="ab-check-requred">
-                                                <label for="checkedRequered">
-                                                    <input onfocus="cleanCheckbox()" onblur="isValidCheckbox(event)"
+                                                <!--  -->
+                                                <label id="label-checkbox" for="checkedRequered">
+                                                    <input onfocus="cleanCheckbox()" onblur="isValidCheckbox(this.checked)"
                                                         type="checkbox" id="checkedRequered" class="check-mark">
                                                     <span class="ab-check-mark-box"></span>
                                                     <span id="checkbox-text" class="text">I have read and agree to the
@@ -3774,7 +3677,9 @@
         </div>
     </div>
     <!-- ============cokie policy section styles==========[end] -->
-    <script>onload();</script>
+    <script src="./assests/footer-form.js"></script>
+    <script src="./assests/recaptcha.js"></script>
+    <script>loadScriptOnce();</script>
 </body>
 
 </html>
