@@ -67,10 +67,3 @@ function isValidCheckbox(checked) {
     }
 }
 
-const getElemValuesByIds = (ids) => {
-    return Array.from(ids).map(id => {
-        const elem = document.getElementById(id)
-        console.log(elem)
-        return elem.value
-    })
-}
