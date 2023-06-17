@@ -134,7 +134,6 @@ async function onSubmit(token) {
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
 
     const asyncSubmit = async () => {
-        return true
         fetch("https://api.accbuddy.com/public", {
             method: 'POST',
             headers: {
