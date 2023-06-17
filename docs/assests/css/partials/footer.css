@@ -452,6 +452,8 @@
   .ab-button-style {
     padding: 20px 0;
   }
+
+
 }
 
 @media screen and (max-width: 1399px) and (min-width: 992px) {
@@ -570,7 +572,8 @@
 }
 
 .ab-check-requred.warning label .ab-check-mark-box {
-  border: 2px solid var(--ab_warning);
+  /* border: 2px solid var(--ab_warning); */
+  border: 2px solid #D697B6;
 }
 
 .ab-check-requred label .ab-check-mark-box:before {
@@ -633,9 +636,9 @@
   .ab-footer-input-form .ab-form-input-box-success {
     display: grid;
     grid-template-areas:
-    'formInputOne formInputOne'
-    'formInputOne formInputOne'
-    'formInputFive formInputFour';
+      'formInputOne formInputOne'
+      'formInputOne formInputOne'
+      'formInputFive formInputFour';
     gap: 20px;
   }
 
@@ -673,10 +676,15 @@
   .ab-footer-input-form .ab-form-input-box-success {
     display: grid;
     grid-template-areas:
-    'formInputOne formInputOne'
-    'formInputOne formInputOne'
-    'formInputFive formInputFour';
+      'formInputOne formInputOne'
+      'formInputOne formInputOne'
+      'formInputFive formInputFour';
     gap: 20px;
+    grid-template-columns: 3fr 2fr;
+  }
+
+  .ab-button-group {
+    margin-top: 0px;
   }
 
   .ab-footer-input-form .ab-form-input-box div:nth-child(1) {
@@ -707,6 +715,10 @@
   .ab-footer-input-form .ab-textarea-group textarea,
   .ab-footer-input-form .ab-input-group .ab-input {
     padding: 22px 15px;
+  }
+
+  .ui-response {
+    max-width: 100% !important;
   }
 }
 
@@ -810,5 +822,15 @@
 @media screen and (max-width: 767px) {
   .ab-changed-state-wrapper .ab-button-group .ab-button-style.ab-footer-button {
     padding: 20px 15px;
+  }
+}
+
+#submit:disabled {
+  background-color: #F6CE8E !important;
+}
+
+@media screen and (min-width: 1257px) {
+  .ui-response {
+    max-width: 595px !important;
   }
 }
