@@ -570,7 +570,8 @@
 }
 
 .ab-check-requred.warning label .ab-check-mark-box {
-  border: 2px solid var(--ab_warning);
+  /* border: 2px solid var(--ab_warning); */
+  border: 2px solid #D697B6;
 }
 
 .ab-check-requred label .ab-check-mark-box:before {

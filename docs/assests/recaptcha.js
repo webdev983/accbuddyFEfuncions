@@ -34,8 +34,9 @@ async function onSubmit(token) {
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
     FOOTER_FORM.querySelector("#submit").innerText = "Sending..."
 
-    
+
     const asyncSubmit = async () => {
+        return true
         fetch("https://api.accbuddy.com/public", {
             method: 'POST',
             headers: {
