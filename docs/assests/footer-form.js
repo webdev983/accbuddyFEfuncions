@@ -23,6 +23,9 @@ function isSubmit() { // checks if there are invalid inputs via false value
 function setPropertyValid(propName, value) { // a setter that updates IS_SUBMIT
     validInputs[propName] = value
     isSubmit()
+    if (value === true && IS_SUBMIT) {
+        SUBMIT_BUTTON.disabled = false
+    }
 }
 
 function cleanInput(event) {
@@ -42,10 +45,11 @@ function toggleWarningClass(isValid, abInputGroup) {
     }
 }
 
-function isValidName(event) {
-    const name = event.target.value
+function isValidName() {
+    const nameElem = FOOTER_FORM.querySelector("#name")
+    const name = nameElem.value
     const isValid = name.trim().length > 0
-    const abInputGroup = event.target.parentNode
+    const abInputGroup = nameElem.parentNode
     if (!isValid && abInputGroup) {
         abInputGroup.classList.add("warning")
         setPropertyValid("name", false)
@@ -54,11 +58,12 @@ function isValidName(event) {
     }
 }
 
-function isValidEmail(event) {
-    const email = event.target.value
+function isValidEmail() {
+    const emailElem = FOOTER_FORM.querySelector("#email")
+    const email = emailElem.value
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(email);
-    const abInputGroup = event.target.parentNode
+    const abInputGroup = emailElem.parentNode
     if (!isValid && abInputGroup) {
         abInputGroup.classList.add("warning")
         setPropertyValid("email", false)
@@ -67,11 +72,12 @@ function isValidEmail(event) {
     }
 }
 
-function isValidText(event) {
-    const text = event.target.value
+function isValidText() {
+    const textElem = FOOTER_FORM.querySelector("#text")
+    const text = textElem.value
     const textLength = text.trim().length
     const isValid = textLength >= 10 && textLength <= 1000
-    const abInputGroup = event.target.parentNode
+    const abInputGroup = textElem.parentNode
     if (!isValid && abInputGroup) {
         abInputGroup.classList.add("warning")
         setPropertyValid("text", false)
@@ -115,8 +121,6 @@ function handleCheckbox() {
 
 
 async function onSubmit(token) {
-    SUBMIT_BUTTON.disabled = true
-    SUBMIT_BUTTON.style.cursor = "default"
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
 
     const asyncSubmit = async () => {
@@ -141,10 +145,9 @@ async function onSubmit(token) {
     const isSuccess = await asyncSubmit()
 
     if (isSuccess) {
-        handleFormFooterResponse()
         SUBMIT_BUTTON.disabled = false
     } else {
-        alert("Sending failed. Please load the page again.")
+        handleFormFooterResponse()
     }
 
 }
@@ -167,4 +170,30 @@ function handleFormFooterResponse() {
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#checkedRequered").checked = false
+}
+
+function handleErrorForm() {
+    console.log('1', validInputs)
+    isValidName()
+    isValidEmail()
+    isValidText()
+    isValidCheckbox()
+    console.log('2', validInputs)
+}
+
+function validate(e) {
+    e.preventDefault()
+    isSubmit()
+    if (!IS_SUBMIT) {
+        handleErrorForm()
+        SUBMIT_BUTTON.disabled = true
+    } else {
+        grecaptcha.execute()
+    }
+}
+
+function onload() {
+    var element = document.getElementById('submit');
+    element.onclick = validate;
+
 }
