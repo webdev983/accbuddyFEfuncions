@@ -23,23 +23,10 @@ function isSubmit() { // checks if there are invalid inputs via false value
 function setPropertyValid(propName, value) { // a setter that updates IS_SUBMIT
     validInputs[propName] = value
     isSubmit()
-
-    if (IS_SUBMIT) {
-        SUBMIT_BUTTON.disabled = false
-    } else {
-        SUBMIT_BUTTON.disabled = true
-    }
 }
 
 function cleanInput(event) {
     const parent = event.target.parentNode
-    isSubmit()
-
-    if (IS_SUBMIT) {
-        SUBMIT_BUTTON.disabled = false
-    } else {
-        SUBMIT_BUTTON.disabled = true
-    }
 
     if (parent) {
         parent.classList.remove("warning")
@@ -128,9 +115,8 @@ function handleCheckbox() {
 
 
 async function onSubmit(token) {
-    if (SUBMIT_BUTTON.disabled) {
-        return
-    }
+    SUBMIT_BUTTON.disabled = true
+    SUBMIT_BUTTON.style.cursor = "default"
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
 
     const asyncSubmit = async () => {
@@ -153,13 +139,14 @@ async function onSubmit(token) {
     }
 
     const isSuccess = await asyncSubmit()
+
     if (isSuccess) {
-        SUBMIT_BUTTON.innerText = "Sending..."
         handleFormFooterResponse()
-        SUBMIT_BUTTON.innerText = "Send"
+        SUBMIT_BUTTON.disabled = false
     } else {
-        alert("Sending failed.")
+        alert("Sending failed. Please load the page again.")
     }
+
 }
 
 function handleFormFooterResponse() {
@@ -180,5 +167,4 @@ function handleFormFooterResponse() {
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#checkedRequered").checked = false
-
 }
