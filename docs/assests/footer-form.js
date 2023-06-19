@@ -89,7 +89,7 @@ function isValidText() {
 function cleanCheckbox() {
     const spanText = FOOTER_FORM.querySelector("#checkbox-text")
     const abCheckRequred = FOOTER_FORM.querySelector(".ab-check-requred")
-    if (spanText && abCheckRequred) {
+    if (abCheckRequred) {
         abCheckRequred.classList.remove("warning")
         spanText.innerText = "I have read and agree to the Privacy Policy and Terms of Service"
     }
@@ -98,25 +98,18 @@ function cleanCheckbox() {
 function isValidCheckbox() {
     const abCheckRequred = FOOTER_FORM.querySelector(".ab-check-requred")
     const checkedRequered = FOOTER_FORM.querySelector("#checkedRequered")
+
+    setPropertyValid("checkbox", checkedRequered.checked)
+
     if (!checkedRequered.checked && abCheckRequred) {
         abCheckRequred.classList.add("warning")
         const spanText = FOOTER_FORM.querySelector("#checkbox-text")
 
         spanText.innerText = "In order to submit your message, you need to accept our privacy policy and terms of conditions"
-        setPropertyValid("checkbox", false)
-
     } else {
-        setPropertyValid("checkbox", true)
-        checkedRequered.checked = true
+        cleanCheckbox()
+        isSubmit()
     }
-}
-
-function handleCheckbox() {
-    const checkedRequered = FOOTER_FORM.querySelector("#checkedRequered")
-    const val = checkedRequered.checked
-    checkedRequered.checked = val
-    setPropertyValid("checkbox", val)
-    isSubmit()
 }
 
 
@@ -161,7 +154,6 @@ function handleFormFooterResponse() {
     div.style = "min-width: 100% !important; padding: 35px 44.91px; border: 1px solid var(--ab_violet)"
     div.innerHTML = "<span style='font-family: var(--ab_primary-font);font-style:normal;font-weight: 800;font-size: 16px;line-height:20px;letter-spacing:-0.5px;color: var(--ab_violet);'><object data='./assests/image/checkmark.svg'></object> Thank you</span ><p class='p' style='margin-top: 18.58px; color: var(--ab_violet)'>Your message has been sent.</p>"
 
-    console.log('abFormInbox', div)
     abFormInbox.insertBefore(div, abFormInbox.firstChild)
     abFormInbox.classList.add("ab-form-input-box-success")
 
@@ -173,12 +165,10 @@ function handleFormFooterResponse() {
 }
 
 function handleErrorForm() {
-    console.log('1', validInputs)
     isValidName()
     isValidEmail()
     isValidText()
     isValidCheckbox()
-    console.log('2', validInputs)
 }
 
 function validate(e) {
@@ -195,5 +185,4 @@ function validate(e) {
 function onload() {
     var element = document.getElementById('submit');
     element.onclick = validate;
-
 }
