@@ -148,11 +148,13 @@ async function onSubmit(token) {
 function handleFormFooterResponse() {
     // flow: add UI response -> insert as first element of ab-form-inbox -> change grid-template-areas into ab-form-input-box-success
     const abFormInbox = FOOTER_FORM.querySelector(".ab-form-input-box")
+    const closeSvgElement = "<img onclick='handleCloseFormFooter()' style='display: block;margin-left: auto;' class='' src='./assests/image/footer-close.svg' alt='close_icon'>"
+    
     const div = document.createElement("div")
 
     div.className = "ui-response"
-    div.style = "min-width: 100% !important; padding: 35px 44.91px; border: 1px solid var(--ab_violet)"
-    div.innerHTML = "<span style='font-family: var(--ab_primary-font);font-style:normal;font-weight: 800;font-size: 16px;line-height:20px;letter-spacing:-0.5px;color: var(--ab_violet);'><object data='./assests/image/checkmark.svg'></object> Thank you</span ><p class='p' style='margin-top: 18.58px; color: var(--ab_violet)'>Your message has been sent.</p>"
+    div.style = "height: 141px; min-width: 100% !important; padding: 35px 44.91px;padding-top: 10.15px;padding-right: 10.1px; border: 1px solid var(--ab_violet)"
+    div.innerHTML = closeSvgElement+"<span style='font-family: var(--ab_primary-font);font-style:normal;font-weight: 800;font-size: 16px;line-height:20px;letter-spacing:-0.5px;color: var(--ab_violet);'><object data='./assests/image/checkmark.svg'></object> Thank you</span ><p class='p' style='margin-top: 18.58px; color: var(--ab_violet)'>Your message has been sent.</p>"
 
     abFormInbox.insertBefore(div, abFormInbox.firstChild)
     abFormInbox.classList.add("ab-form-input-box-success")
@@ -162,6 +164,22 @@ function handleFormFooterResponse() {
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#checkedRequered").checked = false
+}
+
+function handleCloseFormFooter() {
+    const abFormInbox = FOOTER_FORM.querySelector(".ab-form-input-box")
+    const uiResponse = FOOTER_FORM.querySelector(".ui-response")
+
+    abFormInbox.classList.remove("ab-form-input-box-success")
+    abFormInbox.removeChild(uiResponse);
+    FOOTER_FORM.querySelector("#name").parentNode.style.display = "block"
+    FOOTER_FORM.querySelector("#name").value = ""
+    FOOTER_FORM.querySelector("#email").parentNode.style.display = "block"
+    FOOTER_FORM.querySelector("#email").value = ""
+    FOOTER_FORM.querySelector("#text").parentNode.style.display = "block"
+    FOOTER_FORM.querySelector("#text").value = ""
+    FOOTER_FORM.querySelector("#checkedRequered").checked = false
+    grecaptcha.reset()
 }
 
 function handleErrorForm() {

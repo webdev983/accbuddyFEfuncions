@@ -834,3 +834,30 @@
     max-width: 595px !important;
   }
 }
+
+/* Footer FORM UI RESPONSE HANDLE CSS */
+
+.footer-plank {
+  height: 61.34px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 17.38px;
+  gap: 10.22px;
+  margin-bottom: 5px;
+}
+
+.plank-red {
+  background-color: var(--ab_warning);
+  color: var(--ab_white);
+}
+
+.plank-dismiss {
+  margin-left: auto;
+  width: 30px;
+  height: 30px;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
