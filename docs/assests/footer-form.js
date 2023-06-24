@@ -117,44 +117,71 @@ async function onSubmit(token) {
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
 
     const asyncSubmit = async () => {
-        fetch("https://api.accbuddy.com/public", {
+        const result = { message: "", errorMessage: null, status: null }
+
+        const res = await fetch("https://api.accbuddy.com/public", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                test_recaptcha: {
-                    token,
-                },
-                sendMessageDataset: {
-                    sender: name,
-                    email: email,
-                    text: text,
+                "sendMessage": {
+                    "token": token,
+                    "name": name,
+                    "email": email,
+                    "message": text
                 }
             })
-        }).then(res => true).catch(err => false)
+        })
+        const json = await res.json()
+        if (!res.ok && res.status == 400) {
+            const ERROR = json.error
+            result.status = res.status
+            result.errorMessage = ERROR
+        } else if (res.ok) {
+            const MESSAGE = json.result
+            result.message = MESSAGE
+        }
+        return result
     }
 
-    const isSuccess = await asyncSubmit()
-
-    if (isSuccess) {
+    const result = await asyncSubmit()
+    console.log('result', result)
+    if (result.errorMessage !== null) {
+        handleFormFooterError(result.errorMessage)
         SUBMIT_BUTTON.disabled = false
     } else {
-        handleFormFooterResponse()
+        handleFormFooterResponse(result.message)
     }
+}
+
+function closeErrorPlank() {
+    const plank = document.querySelector("#footer-error-plank")
+    plank.classList.add("hidden")
+    grecaptcha.reset()
+}
+
+function handleFormFooterError(errorMessage) {
+    const plank = document.querySelector("#footer-error-plank")
+    const plankMessageElem = plank.querySelector(".plank")
+
+    plank.classList.remove("hidden")
+    plankMessageElem.innerHTML = errorMessage
 
 }
 
-function handleFormFooterResponse() {
+function handleFormFooterResponse(message) {
+    const plank = document.querySelector("#footer-error-plank")
+    plank.classList.add("hidden")
     // flow: add UI response -> insert as first element of ab-form-inbox -> change grid-template-areas into ab-form-input-box-success
     const abFormInbox = FOOTER_FORM.querySelector(".ab-form-input-box")
     const closeSvgElement = "<img onclick='handleCloseFormFooter()' style='display: block;margin-left: auto;' class='' src='./assests/image/footer-close.svg' alt='close_icon'>"
-    
+
     const div = document.createElement("div")
 
     div.className = "ui-response"
     div.style = "height: 141px; min-width: 100% !important; padding: 35px 44.91px;padding-top: 10.15px;padding-right: 10.1px; border: 1px solid var(--ab_violet)"
-    div.innerHTML = closeSvgElement+"<span style='font-family: var(--ab_primary-font);font-style:normal;font-weight: 800;font-size: 16px;line-height:20px;letter-spacing:-0.5px;color: var(--ab_violet);'><object data='./assests/image/checkmark.svg'></object> Thank you</span ><p class='p' style='margin-top: 18.58px; color: var(--ab_violet)'>Your message has been sent.</p>"
+    div.innerHTML = closeSvgElement + "<span style='font-family: var(--ab_primary-font);font-style:normal;font-weight: 800;font-size: 16px;line-height:20px;letter-spacing:-0.5px;color: var(--ab_violet);'><object data='./assests/image/checkmark.svg'></object> Thank you</span ><p class='p' style='margin-top: 18.58px; color: var(--ab_violet)'>" + message + "</p>"
 
     abFormInbox.insertBefore(div, abFormInbox.firstChild)
     abFormInbox.classList.add("ab-form-input-box-success")
