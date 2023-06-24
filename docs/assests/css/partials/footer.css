@@ -852,6 +852,10 @@
   color: var(--ab_white);
 }
 
+.hidden {
+  display: none;
+}
+
 .plank-dismiss {
   margin-left: auto;
   width: 30px;
