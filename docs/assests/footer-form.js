@@ -112,6 +112,31 @@ function isValidCheckbox() {
     }
 }
 
+function ch(event) {
+    console.log('e', event.target.value)
+}
+
+function listenForChanges() {  // listens for onchange event of all inputs
+    const [name, email, text] = [FOOTER_FORM.querySelector('#name'), FOOTER_FORM.querySelector('#email'), FOOTER_FORM.querySelector('#text'),]
+    name.addEventListener('input', (e) => {
+        isValidName()
+        if (validInputs['name']) {
+            cleanInput(e)
+        }
+    });
+    email.addEventListener('input', (e) => {
+        isValidEmail()
+        if (validInputs['email']) {
+            cleanInput(e)
+        }
+    });
+    text.addEventListener('input', (e) => {
+        isValidText()
+        if (validInputs['text']) {
+            cleanInput(e)
+        }
+    });
+}
 
 async function onSubmit(token) {
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
@@ -190,7 +215,8 @@ function handleFormFooterResponse(message) {
     FOOTER_FORM.querySelector("#name").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#email").parentNode.style.display = "none"
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
-    FOOTER_FORM.querySelector("#text").parentNode.style.display = "none"
+    FOOTER_FORM.querySelector("#label-checkbox").parentNode.style.visibility = "hidden"
+    FOOTER_FORM.querySelector("#submit").parentNode.style.visibility = "hidden"
     FOOTER_FORM.querySelector("#checkedRequered").checked = false
 }
 
@@ -206,6 +232,8 @@ function handleCloseFormFooter() {
     FOOTER_FORM.querySelector("#email").value = ""
     FOOTER_FORM.querySelector("#text").parentNode.style.display = "block"
     FOOTER_FORM.querySelector("#text").value = ""
+    FOOTER_FORM.querySelector("#label-checkbox").parentNode.style.visibility = "visible"
+    FOOTER_FORM.querySelector("#submit").parentNode.style.visibility = "visible"
     FOOTER_FORM.querySelector("#checkedRequered").checked = false
     grecaptcha.reset()
 }
@@ -221,6 +249,7 @@ function validate(e) {
     e.preventDefault()
     isSubmit()
     if (!IS_SUBMIT) {
+        listenForChanges()
         handleErrorForm()
         SUBMIT_BUTTON.disabled = true
     } else {
