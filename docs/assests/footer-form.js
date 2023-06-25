@@ -145,14 +145,15 @@ async function onSubmit(token) {
         return result
     }
 
+    SUBMIT_BUTTON.disabled = true
     const result = await asyncSubmit()
     console.log('result', result)
     if (result.errorMessage !== null) {
         handleFormFooterError(result.errorMessage)
-        SUBMIT_BUTTON.disabled = false
     } else {
         handleFormFooterResponse(result.message)
     }
+    SUBMIT_BUTTON.disabled = false
 }
 
 function closeErrorPlank() {
