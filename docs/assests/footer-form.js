@@ -140,7 +140,10 @@ function listenForChanges() {  // listens for onchange event of all inputs
 
 async function onSubmit(token) {
     const [name, email, text] = getElemValuesByIds(['name', 'email', 'text'])
+    const submitBtn = FOOTER_FORM.querySelector('#submit')
 
+    submitBtn.innerHTML = "sending"
+    
     const asyncSubmit = async () => {
         const result = { message: "", errorMessage: null, status: null }
 
@@ -172,7 +175,8 @@ async function onSubmit(token) {
 
     SUBMIT_BUTTON.disabled = true
     const result = await asyncSubmit()
-    console.log('result', result)
+    submitBtn.innerHTML = "send"
+
     if (result.errorMessage !== null) {
         handleFormFooterError(result.errorMessage)
     } else {
