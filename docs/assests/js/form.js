@@ -1,12 +1,11 @@
-class Input {
-    static CAN_SUBMIT = {
-        email: false,
-        password: false,
-        confirmPassword: false,
-        checkbox: false,
-    }
+const SIGNUP_FORM = document.querySelector("#signup-form")
 
-    static HAS_SUBMITTED = false
+class Input {
+    // onblur will validate
+    // onfocus will clean
+    // submit button remains active until invalid submit
+    // submit button becomes active when all inputs are valid
+    // show all errors on invalid submit
 
     constructor({ id = "", doc = document, name = undefined, validation = "" }) {
         this.element = doc.querySelector(`#${id}`)
@@ -17,55 +16,17 @@ class Input {
 
         this.element.addEventListener('focus', () => this.cleanError())
         this.element.addEventListener('blur', () => this.handleInput())
-        this.element.addEventListener('input', () => {
-            if (Input.HAS_SUBMITTED) {
-                this.handleInput()
-            }
-        })
     }
 
     get isValid() {
         return this.validation.test(this.element.value)
     }
 
-    set validInput(boolVal) {
-        const name = this.name
-        if (name) {
-            Input.CAN_SUBMIT[name] = boolVal
-        }
-    }
-
-    static get ALL_VALID() {
-        let val = true
-        for (let prop in Input.CAN_SUBMIT) {
-            if (Input.CAN_SUBMIT[prop] === false) {
-                val = false
-                break
-            }
-        }
-        return val
-    }
-
     handleInput() {
-        this.validInput = this.isValid
-
         if (false === this.isValid) {
-            if (this.element.id === "signup-password") {
-                const span = this.error.querySelector('span')
-                let text = "Please enter a valid password."
-                if (this.element.value.length > 0) {
-                    text = "Password must be at least 8 characters in length and contain uppercase, lowercase letters, and special characters."
-                }
-                if (span) {
-                    span.innerText = text
-                }
-            }
-
             this.parent.classList.add('warning')
             this.error.style.display = 'flex'
-            this.validInput
         } else {
-            this.validInput = true
             if (Input.HAS_SUBMITTED && Input.ALL_VALID) {
                 SUBMIT_BUTTON.disabled = false
             }
@@ -92,11 +53,9 @@ class ConfirmInput extends Input {
 
     handleInput() {
         const isElem2Valid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/.test(this.elem2.value)
-
+        console.log('hello', isElem2Valid, this.elem2.value)
         if (this.element.value.length && isElem2Valid) {
             super.handleInput()
-        } else {
-            Input.CAN_SUBMIT.confirmPassword = false
         }
     }
 }
@@ -119,70 +78,65 @@ class CheckboxInput extends Input {
 const signupForm = {
     email: new Input({ id: 'signup-email', name: 'email', validation: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }),
     password: new Input({ id: 'signup-password', name: 'password', validation: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/ }),
-    confirmPassword: new ConfirmInput({ id: 'signup-confirm-password', name: 'confirmPassword', elemId: 'signup-password' }),
     checkbox: new CheckboxInput({ id: 'checkedRequered4', name: 'checkbox', }),
-}
 
-const SIGNUP_FORM = document.querySelector('#signup-form')
+}
+signupForm.confirmPassword = new ConfirmInput({ id: 'signup-confirm-password', name: 'confirmPassword', elemId: 'signup-password' })
+const SIGN_UP_KEYS = Object.keys(signupForm)
+
 const SUBMIT_BUTTON = SIGNUP_FORM.querySelector('#signup-submit')
 SUBMIT_BUTTON.onclick = handleSubmit
 
-function toggleSubmitBtnDisable(submitBtn, boolVal) {
-    if (boolVal === true && validateAll(signupForm)) {
-        submitBtn.disabled = boolVal
-    } else {
-        submitBtn.disabled = false
+var SUBMITTED_ONCE = false
+
+function postSubmitInputsHandler() {
+    var isAllValid = true
+    for (let prop of SIGN_UP_KEYS) {
+        const input = signupForm[prop]
+        if (input.isValid === false) {
+            isAllValid = false
+            break
+        }
+    }
+
+    return isAllValid
+}
+
+function loadPostSubmitHandlers() {
+    for (let key of SIGN_UP_KEYS) {
+        const input = signupForm[key]
+        input.element.addEventListener('input', () => {
+            if (SUBMIT_BUTTON.disabled === true) {
+                SUBMIT_BUTTON.disabled = !postSubmitInputsHandler()
+            }
+        })
     }
 }
 
 async function handleSubmit(e) {
     e.preventDefault()
-    Input.HAS_SUBMITTED = true
+    SUBMIT_BUTTON.disabled = true
+    let isFormValid = true
 
-    console.log('Input.CAN_SUBMIT', Input.CAN_SUBMIT)
-    if (!Input.ALL_VALID) {
-        SUBMIT_BUTTON.disabled = true
-        return
-    }
+    if (SUBMITTED_ONCE === false) {
+        SUBMITTED_ONCE = true
+        loadPostSubmitHandlers()
+    } 
 
-    const asyncSubmit = async () => {
-        const result = { message: "", errorMessage: null, status: null }
-
-        const res = await fetch("https://api.accbuddy.com/public", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "signup": {
-                    "token": "",
-                    "user": {
-                        "username": signupForm.email.element.value,
-                        "password": signupForm.password.element.value
-                    }
-                }
-            })
-        })
-        const json = await res.json()
-        if (!res.ok && res.status == 400) {
-            console.log('json response', json)
-            const ERROR = json.error
-            result.status = res.status
-            result.errorMessage = ERROR
-        } else if (res.ok) {
-            const MESSAGE = json.result
-            result.message = MESSAGE
-            SIGNUP_FORM.reset()
+    const keys = Object.keys(signupForm)
+    for (let prop of keys) {
+        const input = signupForm[prop]
+        input.handleInput()
+        if (isFormValid == true && input.isValid === false) {
+            isFormValid = false
         }
-        console.log('normalized result', result)
-        return result
     }
 
     SUBMIT_BUTTON.disabled = true
-    SUBMIT_BUTTON.innerHTML = "sending"
+    SUBMIT_BUTTON.innerHTML = "Signing up"
 
     const result = await asyncSubmit()
-    SUBMIT_BUTTON.innerHTML = "send"
+    SUBMIT_BUTTON.innerHTML = "Sign up"
 
     let plankSuccess = document.querySelector('#plank-success-id')
     let plankError = document.querySelector('#plank-error-id')
@@ -208,6 +162,37 @@ async function handleSubmit(e) {
 
         SUBMIT_BUTTON.disabled = false
     }
+}
 
+const asyncSubmit = async () => {
+    const result = { message: "", errorMessage: null, status: null }
 
+    const res = await fetch("https://api.accbuddy.com/public", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "signup": {
+                "token": "",
+                "user": {
+                    "username": signupForm.email.element.value,
+                    "password": signupForm.password.element.value
+                }
+            }
+        })
+    })
+    const json = await res.json()
+    if (!res.ok && res.status == 400) {
+        console.log('json response', json)
+        const ERROR = json.error
+        result.status = res.status
+        result.errorMessage = ERROR
+    } else if (res.ok) {
+        const MESSAGE = json.result
+        result.message = MESSAGE
+        SIGNUP_FORM.reset()
+    }
+    console.log('normalized result', result)
+    return result
 }
