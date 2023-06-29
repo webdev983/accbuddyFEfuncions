@@ -48,11 +48,6 @@ class Input {
 
     handleInput() {
         this.validInput = this.isValid
-        if (Input.ALL_VALID) {
-            SUBMIT_BUTTON.disabled = false
-        } else {
-            SUBMIT_BUTTON.disabled = true
-        }
 
         if (false === this.isValid) {
             if (this.element.id === "signup-password") {
@@ -71,6 +66,9 @@ class Input {
             this.validInput
         } else {
             this.validInput = true
+            if (Input.HAS_SUBMITTED && Input.ALL_VALID) {
+                SUBMIT_BUTTON.disabled = false
+            }
             this.cleanError()
         }
     }
@@ -95,7 +93,7 @@ class ConfirmInput extends Input {
     handleInput() {
         const isElem2Valid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/.test(this.elem2.value)
 
-        if (this.element.value.length &&  isElem2Valid) {
+        if (this.element.value.length && isElem2Valid) {
             super.handleInput()
         } else {
             Input.CAN_SUBMIT.confirmPassword = false
@@ -137,14 +135,15 @@ function toggleSubmitBtnDisable(submitBtn, boolVal) {
     }
 }
 
-
 async function handleSubmit(e) {
     e.preventDefault()
+    Input.HAS_SUBMITTED = true
 
-    if (!Input.CAN_SUBMIT) {
+    console.log('Input.CAN_SUBMIT', Input.CAN_SUBMIT)
+    if (!Input.ALL_VALID) {
+        SUBMIT_BUTTON.disabled = true
         return
     }
-    Input.HAS_SUBMITTED = true
 
     const asyncSubmit = async () => {
         const result = { message: "", errorMessage: null, status: null }
