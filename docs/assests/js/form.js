@@ -132,6 +132,10 @@ async function handleSubmit(e) {
         }
     }
 
+    if (isFormValid === false) {
+        return 
+    }
+
     SUBMIT_BUTTON.disabled = true
     SUBMIT_BUTTON.innerHTML = "Signing up"
 
