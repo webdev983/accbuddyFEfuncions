@@ -53,7 +53,6 @@ class ConfirmInput extends Input {
 
     handleInput() {
         const isElem2Valid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/.test(this.elem2.value)
-        console.log('hello', isElem2Valid, this.elem2.value)
         if (this.element.value.length && isElem2Valid) {
             super.handleInput()
         }
