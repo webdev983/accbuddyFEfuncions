@@ -230,3 +230,25 @@ function loadScriptOnce() {
 }
 
 loadScriptOnce()
+
+
+function loadTogglePassword() {
+    const imgEyes = document.querySelectorAll('.toggle-eye')
+    let toggle = false
+
+    function togglePassword() {
+        toggle = !toggle
+    }
+
+    imgEyes.forEach(img => {
+        const abInputGroup = img.parentElement.parentElement
+        const passwordInput = abInputGroup.querySelector('input[type="password"]')
+
+        img.addEventListener('click', () => {
+            togglePassword()
+            passwordInput.type = toggle ? "text" : "password"
+        })
+    })
+}
+
+loadTogglePassword()
