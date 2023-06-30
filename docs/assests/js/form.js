@@ -84,7 +84,7 @@ signupForm.confirmPassword = new ConfirmInput({ id: 'signup-confirm-password', n
 const SIGN_UP_KEYS = Object.keys(signupForm)
 
 const SUBMIT_BUTTON = SIGNUP_FORM.querySelector('#signup-submit')
-SUBMIT_BUTTON.onclick = handleSubmit
+SUBMIT_BUTTON.onclick = validate
 
 var SUBMITTED_ONCE = false
 
@@ -112,7 +112,7 @@ function loadPostSubmitHandlers() {
     }
 }
 
-async function handleSubmit(e) {
+function validate(e) {
     e.preventDefault()
     SUBMIT_BUTTON.disabled = true
     let isFormValid = true
@@ -120,7 +120,7 @@ async function handleSubmit(e) {
     if (SUBMITTED_ONCE === false) {
         SUBMITTED_ONCE = true
         loadPostSubmitHandlers()
-    } 
+    }
 
     const keys = Object.keys(signupForm)
     for (let prop of keys) {
@@ -132,13 +132,16 @@ async function handleSubmit(e) {
     }
 
     if (isFormValid === false) {
-        return 
+        return
     }
+    grecaptcha.execute()
+}
 
+async function handleSubmit(token) {
     SUBMIT_BUTTON.disabled = true
     SUBMIT_BUTTON.innerHTML = "Signing up"
 
-    const result = await asyncSubmit()
+    const result = await asyncSubmit(token)
     SUBMIT_BUTTON.innerHTML = "Sign up"
 
     let plankSuccess = document.querySelector('#plank-success-id')
@@ -165,9 +168,10 @@ async function handleSubmit(e) {
 
         SUBMIT_BUTTON.disabled = false
     }
+    grecaptcha.reset()
 }
 
-const asyncSubmit = async () => {
+async function asyncSubmit(token) {
     const result = { message: "", errorMessage: null, status: null }
 
     const res = await fetch("https://api.accbuddy.com/public", {
@@ -177,7 +181,7 @@ const asyncSubmit = async () => {
         },
         body: JSON.stringify({
             "signup": {
-                "token": "",
+                "token": token,
                 "user": {
                     "username": signupForm.email.element.value,
                     "password": signupForm.password.element.value
@@ -199,3 +203,30 @@ const asyncSubmit = async () => {
     console.log('normalized result', result)
     return result
 }
+
+function loadScriptOnce() {
+    let isGrecaptachaLoaded = false
+
+    // closure is utilized to implement boolean variable for loading once condition
+    function loadScript() {
+        // every focus of inputs will go check if it is loaded
+        // because of closure, isGrecaptachaLoaded will be always tracked by loadscript function
+        if (!isGrecaptachaLoaded) {
+            const script = document.createElement('script');
+            script.src = "https://www.google.com/recaptcha/api.js";
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            isGrecaptachaLoaded = true;
+        }
+    }
+
+    const div = document.createElement('div')
+    div.innerHTML = "<div class='g-recaptcha' data-sitekey='6LcShYkmAAAAAA_FN5w0Oewh_-7XzIocjZlX6apw'data-callback='handleSubmit' data-size='invisible'></div>"
+    const divRecaptcha = div.firstElementChild
+    SIGNUP_FORM.appendChild(divRecaptcha)
+
+    loadScript()
+}
+
+loadScriptOnce()
