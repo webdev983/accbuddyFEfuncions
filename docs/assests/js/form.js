@@ -167,6 +167,10 @@ async function handleSubmit(token) {
         })
 
         SUBMIT_BUTTON.disabled = false
+
+        setTimeout(() => {
+            window.location.assign(window.location.href.replace("signup.html", "signin.html"))
+        }, 3000)
     }
     grecaptcha.reset()
 }
