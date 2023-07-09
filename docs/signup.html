@@ -131,15 +131,8 @@
                             <div id="plank-error-id" class="plank plank-red hidden">
                                 <img src="./assests/image/warning-white.svg" width="30.11" height="30.11"
                                     alt="icons warning" class="warning-icon">
-                                <p class="plank">Registration Success! Please sign in now.</p>
+                                <p class="plank">Email already registered, please sign in.</p>
                                 <button id="plank-close" class="plank-red plank-dismiss" style="font-size:24px;"
-                                    type="button">&times;</button>
-                            </div>
-                            <div id="plank-success-id" class="plank plank-green hidden">
-                                <img src="./assests/image/checkmark-white.svg" width="30.11" height="30.11"
-                                    alt="icons success">
-                                <p class="plank">Account created. Welcome, buddy!</p>
-                                <button id="plank-close" class="plank-green plank-dismiss" style="font-size:24px;"
                                     type="button">&times;</button>
                             </div>
                             <form id="signup-form" action="?">
@@ -161,8 +154,8 @@
                                         </div>
 
                                         <div class="ab-input-group">
-                                            <label class="password-view"><img class="toggle-eye" src="./assests/image/eye.svg"
-                                                    alt="eye icons"></label>
+                                            <label class="password-view"><img class="toggle-eye"
+                                                    src="./assests/image/eye.svg" alt="eye icons"></label>
                                             <input id="signup-password" type="password" required class="ab-input-items"
                                                 placeholder="Password">
                                             <span class="alart-text"
@@ -176,8 +169,8 @@
                                         </div>
 
                                         <div class="ab-input-group">
-                                            <label class="password-view"><img class="toggle-eye" src="./assests/image/eye.svg"
-                                                    alt="eye icons"></label>
+                                            <label class="password-view"><img class="toggle-eye"
+                                                    src="./assests/image/eye.svg" alt="eye icons"></label>
                                             <input id="signup-confirm-password" type="password" required
                                                 class="ab-input-items" placeholder="Confirm Password">
                                             <span class="alart-text"
@@ -205,6 +198,27 @@
                                         </div>
                                         <button id="signup-submit" class="ab-button-style ab-submite-btn">Sign
                                             up</button>
+                                    </div>
+                                </div>
+                                <div style="display: none;" class="ab-auth-content-wrap-box reset-confirmation-mail confirmation-mail-open ">
+                                    <!-- NOTE: [no-access-warning,email-warning] those class 
+                                                need to pass based on topic when showing error for requered items -->
+                                    <div class="ab-input-group-content-box">
+                                        <div class="ab-auth-input-reset-password">
+                                            <div class="ab-input-group-content-box">
+                                                <p class="ab-input-text ab-color2-text">
+                                                    Confirmation code have been <span id="sent-resent">sent</span> to <a href="/"><strong
+                                                            id="user-email">user@gmail.com</strong></a>.
+                                                    Please check it
+                                                    including spam folder.
+                                                </p>
+                                            </div>
+                                            <div class="reset-utilities">
+                                                <button id="resend-ok" class="ab-button-style ab-submite-btn">Ok</button>
+                                                <h6 id="resend-email-btn" class="resend-email">Resend email</h6>
+                                                <h6 id="resend-email-btn-inactive" class="resend-email inactive">Send again in <span id="resend-timer">60</span>s</h6>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>

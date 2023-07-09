@@ -138,18 +138,19 @@ function validate(e) {
 }
 
 async function handleSubmit(token) {
+    let email = signupForm.email.element.value
     SUBMIT_BUTTON.disabled = true
     SUBMIT_BUTTON.innerHTML = "Signing up"
-
     const result = await asyncSubmit(token)
     SUBMIT_BUTTON.innerHTML = "Sign up"
 
-    let plankSuccess = document.querySelector('#plank-success-id')
+    // let plankSuccess = document.querySelector('#plank-success-id')
     let plankError = document.querySelector('#plank-error-id')
+    let content1 = SIGNUP_FORM.querySelector('.ab-input-group-content-box')
+    let content2 = SIGNUP_FORM.querySelector('.ab-auth-content-wrap-box')
 
     if (result.errorMessage !== null) {
         plankError.classList.remove("hidden")
-        plankSuccess.classList.add("hidden")
 
         const plankClose = plankError.querySelector("#plank-close")
         plankClose.addEventListener('click', () => {
@@ -158,21 +159,82 @@ async function handleSubmit(token) {
 
         SUBMIT_BUTTON.disabled = true
     } else {
-        plankSuccess.classList.remove("hidden")
-        plankError.classList.add("hidden")
-
-        const plankClose = plankSuccess.querySelector("#plank-close")
-        plankClose.addEventListener('click', () => {
-            plankSuccess.classList.add("hidden")
+        content1.style.display = "none"
+        content2.style.display = "flex"
+        SIGNUP_FORM.querySelector('#user-email').innerText = email
+        const h6 = SIGNUP_FORM.querySelector('#resend-email-btn')
+        h6.addEventListener('click', async () => {
+            console.log('resend via h6')
+            const res = await resendEmail(email)
+            if (res.errorMessage === null) {
+                SIGNUP_FORM.querySelector('#sent-resent').innerText = 're-sent'
+                // h6.removeEventListener('click')
+                const h6Inactive = SIGNUP_FORM.querySelector('#resend-email-btn-inactive')
+                h6.style.display = "none"
+                h6Inactive.style.display = "block"
+                const resendTimer = SIGNUP_FORM.querySelector('#resend-timer')
+                console.log('resendTimer12', resendTimer)
+                // make resent-email-btn-inactive show
+                const timer = setInterval(() => {
+                    if (resendTimer) {
+                        resendTimer.innerText = parseInt(resendTimer.innerText) - 1
+                        if (resendTimer.innerText === "0") {
+                            clearInterval(timer)
+                            h6.style.display = "block"
+                            h6Inactive.style.display = "none"
+                        }
+                    } else {
+                        console.log('resendTimer does not exist')
+                    }
+                }, 1000)
+                SIGNUP_FORM.querySelector('#resend-ok').addEventListener('click', () => {
+                    clearInterval(timer)
+                    window.location.assign(window.location.href.replace("signup.html", "index.html"))
+                })
+            }
         })
+
 
         SUBMIT_BUTTON.disabled = false
 
-        setTimeout(() => {
-            window.location.assign(window.location.href.replace("signup.html", "signin.html"))
-        }, 3000)
+        // setTimeout(() => {
+        //     window.location.assign(window.location.href.replace("signup.html", "index.html"))
+        // }, 5000)
     }
     grecaptcha.reset()
+}
+
+async function resendEmail(email) {
+    const result = { message: "", errorMessage: null, status: null }
+    const res = await fetch("https://api.accbuddy.com/public", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "resendConfirmation": {
+                "token": "",
+                "user": {
+                    "username": email
+                }
+            }
+        })
+    })
+    const json = await res.json()
+
+    if (!res.ok && res.status == 400) {
+        console.log('json response', json)
+        const ERROR = json.error
+        result.status = res.status
+        result.errorMessage = ERROR
+    } else if (res.ok) {
+        const MESSAGE = json.result
+        result.message = MESSAGE
+        SIGNUP_FORM.reset()
+    }
+
+    console.log('resend result', result)
+    return result
 }
 
 async function asyncSubmit(token) {
@@ -256,3 +318,18 @@ function loadTogglePassword() {
 }
 
 loadTogglePassword()
+
+// SIGNUP_FORM.querySelector('.ab-input-group-content-box').style.display = 'none'
+
+// let plankSuccess = document.querySelector('#plank-success-id')
+// let plankError = document.querySelector('#plank-error-id')
+
+// plankSuccess.classList.remove("hidden")
+// plankError.classList.add("hidden")
+
+// const plankClose = plankSuccess.querySelector("#plank-close")
+// plankClose.addEventListener('click', () => {
+//     plankSuccess.classList.add("hidden")
+// })
+
+// SUBMIT_BUTTON.disabled = false
